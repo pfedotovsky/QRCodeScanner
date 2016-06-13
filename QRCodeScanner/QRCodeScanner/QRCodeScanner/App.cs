@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
 using Xamarin.Forms;
+using ZXing;
+using ZXing.Mobile;
 
 namespace QRCodeScanner
 {
@@ -11,20 +9,34 @@ namespace QRCodeScanner
   {
     public App()
     {
-      // The root page of your application
+      Button scanButton = new Button
+      {
+        Text = "Scan QR Code"
+      };
+      scanButton.Clicked += ScanButtonOnClicked;
+
       MainPage = new ContentPage
       {
         Content = new StackLayout
         {
           VerticalOptions = LayoutOptions.Center,
           Children = {
-            new Label {
-              XAlign = TextAlignment.Center,
-              Text = "Welcome to Xamarin Forms!"
-            }
+            scanButton
           }
         }
-      };
+      }; 
+           
+    }
+
+    private async void ScanButtonOnClicked(object sender, EventArgs eventArgs)
+    {
+      MobileBarcodeScanner scanner = new MobileBarcodeScanner();
+      Result result = await scanner.Scan();
+
+      if (result != null)
+      {
+        await MainPage.DisplayAlert("Result", "Scanned Barcode: " + result.Text, "OK");
+      }
     }
 
     protected override void OnStart()
