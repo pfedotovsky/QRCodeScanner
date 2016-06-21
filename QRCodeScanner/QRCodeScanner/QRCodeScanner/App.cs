@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Xamarin.Forms;
 using ZXing;
 using ZXing.Mobile;
@@ -24,18 +25,19 @@ namespace QRCodeScanner
             scanButton
           }
         }
-      }; 
-           
+      };            
     }
 
     private async void ScanButtonOnClicked(object sender, EventArgs eventArgs)
     {
       MobileBarcodeScanner scanner = new MobileBarcodeScanner();
-      Result result = await scanner.Scan();
 
+      Result result = await scanner.Scan();
       if (result != null)
       {
-        await MainPage.DisplayAlert("Result", "Scanned Barcode: " + result.Text, "OK");
+        SecurityService securityService = new SecurityService();
+        string decrypted = securityService.Decrypt(result.Text, SecurityService.Key);
+        await MainPage.DisplayAlert("Result", "Scanned Barcode: " + decrypted, "OK");
       }
     }
 
